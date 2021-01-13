@@ -1,6 +1,6 @@
 import * as Http from "http";
 
-let Mongo = require('mongodb');
+import * as Mongo from "mongodb";
 
 const DB_NAME = 'luft';
 
@@ -38,7 +38,7 @@ export namespace A08Server {
         let psw: string | null = request.get('psw');
         let email: string | null = request.get('email');
         //check if data is correct
-        if (!vorname || !nachname || !psw || !email) {
+        if (!vorname || !nachname || !psw || !email || !users) {
             return "error";
         }
         //check if user is already existing
@@ -59,7 +59,7 @@ export namespace A08Server {
     async function login(request: URLSearchParams): Promise<string> {
         let psw = request.get('psw');
         let email = request.get('email');
-        if(!psw || !email){
+        if(!psw || !email || !users){
             return "error";
         }
         let userArray = await users.find({email, password: psw}).toArray();
@@ -102,7 +102,7 @@ export namespace A08Server {
     async function handleRequest(_request: Http.IncomingMessage, _response: Http.ServerResponse): Promise<void> {
         console.log("I hear voices!", _request.url);
 
-        let response = await evaluateResponse(_request.url, _request);
+        let response = await evaluateResponse(<string>_request.url, _request);
 
         _response.setHeader("content-type", "text/html; charset=utf-8");
         _response.setHeader("Access-Control-Allow-Origin", "*");
